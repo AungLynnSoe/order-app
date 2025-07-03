@@ -31,27 +31,50 @@ export default function MenuPage() {
   const [quantity, setQuantity] = useState(1);
   const [showCheckout, setShowCheckout] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    fetch(MENU_API_URL, {
-      headers: {
-        "X-API-KEY": process.env.NEXT_PUBLIC_MICROCMS_API_KEY || "",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => setMenu(data.contents));
+    const fetchMenuData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(MENU_API_URL, {
+          headers: {
+            "X-API-KEY": process.env.NEXT_PUBLIC_MICROCMS_API_KEY || "",
+          },
+        });
+
+        const data = await response.json();
+        setMenu(data.contents);
+      } catch (err) {
+        console.error("メニュー取得エラー:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMenuData();
 
     const saved = localStorage.getItem("cart");
     if (saved) {
-      const parsedCart = JSON.parse(saved).map((item: any) => ({
-    ...item,
-    price: Number(item.price), // ← ここが重要
-  }));
-  setCart(parsedCart);
-}
-
+      try {
+        setCart(JSON.parse(saved));
+      } catch (e) {
+        console.error("カートデータ読み込みエラー:", e);
+        localStorage.removeItem("cart");
+      }
+    }
   }, []);
+
+  // 合計金額計算関数
+  const calculateTotal = () => {
+    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
+
+  // 価格表示フォーマット関数
+  const formatPrice = (price: number) => {
+    return price?.toLocaleString("ja-JP") || "0";
+  };
 
   const openConfirmModal = (item: MenuItem) => {
     setSelectedItem(item);
@@ -94,13 +117,6 @@ export default function MenuPage() {
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
-  const calculateTotal = () => {
-    return cart.reduce(
-      (total, item) => total + Number(item.price) * item.quantity,
-      0
-    );
-  };
-
   const completeOrder = () => {
     setOrderComplete(true);
   };
@@ -111,6 +127,10 @@ export default function MenuPage() {
     setShowCheckout(false);
     setOrderComplete(false);
   };
+
+  if (isLoading) {
+    return <div className={styles.loading}>読み込み中...</div>;
+  }
 
   return (
     <div className={styles.container}>
@@ -135,14 +155,19 @@ export default function MenuPage() {
                 <h3 className={styles.name}>{item.name}</h3>
                 <div className={styles.priceContainer}>
                   <span className={styles.price}>
-                    {item.price.toLocaleString("ja-JP")}
+                    {formatPrice(item.price)}円
                   </span>
-                  {typeof item.price === "number" && !isNaN(item.price) && (
+                  {item.price && (
                     <span className={styles.taxInclusive}>
-                      (税込
-                      {Math.round(item.price * 1.1).toLocaleString("ja-JP")}円)
+                      (税込 {formatPrice(Math.round(item.price * 1.1))}円)
                     </span>
                   )}
+
+                  {/* {item.price && (
+                    <span className={styles.taxInclusive}>
+                      (税込 {formatPrice(Math.round(item.price * 1.1)}円)
+                    </span>
+                  )} */}
                 </div>
                 {item.comment && (
                   <p className={styles.comment}>
@@ -161,7 +186,6 @@ export default function MenuPage() {
                   注文
                 </button>
               </div>
-             
             </li>
           ))}
         </ul>
@@ -214,9 +238,8 @@ export default function MenuPage() {
                           </button>
                         </div>
                         <p className={styles.cartPrice}>
-                          {Number(item.price) * item.quantity}円
+                          {formatPrice(item.price * item.quantity)}円
                         </p>
-
                         <button
                           onClick={() => removeFromCart(item.id)}
                           className={styles.removeButton}
@@ -229,7 +252,7 @@ export default function MenuPage() {
                 </ul>
                 <div className={styles.totalSection}>
                   <p className={styles.totalText}>
-                    合計金額: {calculateTotal()}円
+                    合計金額: {formatPrice(calculateTotal())}円
                   </p>
                   <button
                     className={styles.checkoutButton}
@@ -252,12 +275,12 @@ export default function MenuPage() {
                       <span>
                         {item.name} × {item.quantity}
                       </span>
-                      <span>{Number(item.price) * item.quantity}円</span>
+                      <span>{formatPrice(item.price * item.quantity)}円</span>
                     </li>
                   ))}
                 </ul>
                 <p className={styles.checkoutTotal}>
-                  合計: {calculateTotal()}円
+                  合計: {formatPrice(calculateTotal())}円
                 </p>
                 <div className={styles.checkoutButtons}>
                   <button
@@ -292,7 +315,9 @@ export default function MenuPage() {
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
             <h3>{selectedItem.name}</h3>
-            <p className={styles.modalPrice}>{selectedItem.price}円</p>
+            <p className={styles.modalPrice}>
+              {formatPrice(selectedItem.price)}円
+            </p>
             <div className={styles.quantitySelector}>
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
