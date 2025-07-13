@@ -34,80 +34,82 @@ export default function MenuPage() {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  
-   useEffect(() => {
-  
-      // formatPrice関数はそのまま（既に正しく実装されている）
+  useEffect(() => {
+    const fetchMenuData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(MENU_API_URL, {
+          headers: {
+            "X-API-KEY": process.env.NEXT_PUBLIC_MICROCMS_API_KEY || "",
+          },
+        });
 
+        const data = await response.json();
+        console.log("APIから取得したメニュー:", data);
 
-// APIデータ取得部分の修正
-const fetchMenuData = async () => {
-  try {
-    setIsLoading(true);
-    const response = await fetch(MENU_API_URL, {
-      headers: {
-        "X-API-KEY": process.env.NEXT_PUBLIC_MICROCMS_API_KEY || "",
-      },
-    });
+        const fixedMenu = data.contents.map((item: MenuItem) => {
+          const price =
+            typeof item.price === "string"
+              ? parseInt(item.price, 10)
+              : item.price;
 
-    const data = await response.json();
-    console.log("APIから取得したメニュー:", data);
+          if (isNaN(price) || price == null) {
+            console.error(`無効な価格です: ${item.price}`, item);
+            return {
+              ...item,
+              price: 0,
+            };
+          }
 
-    // 価格処理の簡素化
-    const fixedMenu = data.contents.map((item: MenuItem) => {
-      // 価格が数値でない場合、数値に変換
-      const price = typeof item.price === 'string' 
-        ? parseInt(item.price, 10) 
-        : item.price;
+          return {
+            ...item,
+            price: Math.max(0, price),
+          };
+        });
 
-      // 数値変換に失敗した場合や不正な値の場合の処理
-      if (isNaN(price) || price == null) {
-        console.error(`無効な価格です: ${item.price}`, item);
-        return {
-          ...item,
-          price: 0, // または適切なデフォルト値
-        };
+        setMenu(fixedMenu);
+      } catch (err) {
+        console.error("メニュー取得エラー:", err);
+      } finally {
+        setIsLoading(false);
       }
+    };
 
-      return {
-        ...item,
-         price: Math.max(0, price),
-        };
-      });
+    fetchMenuData();
 
-      setMenu(fixedMenu);
-    } catch (err) {
-      console.error("メニュー取得エラー:", err);
-    } finally {
-      setIsLoading(false);
+    const saved = localStorage.getItem("cart");
+    if (saved) {
+      try {
+        const parsedCart: CartItem[] = JSON.parse(saved).map(
+          (item: CartItem) => ({
+            ...item,
+            price: parseInt(String(item.price), 10) || 999,
+          })
+        );
+        setCart(parsedCart);
+      } catch (e) {
+        console.error("カートデータ読み込みエラー:", e);
+        localStorage.removeItem("cart");
+      }
     }
-  };
-
-  fetchMenuData();
-
-  // ローカルストレージからカートを復元
-  const saved = localStorage.getItem("cart");
-  if (saved) {
-    try {
-      const parsedCart: CartItem[] = JSON.parse(saved).map((item: CartItem) => ({
-        ...item,
-        price: parseInt(String(item.price), 10) || 999, // 数値化
-      }));
-      setCart(parsedCart);
-    } catch (e) {
-      console.error("カートデータ読み込みエラー:", e);
-      localStorage.removeItem("cart");
-    }
-  }
-}, []);
-
-  const calculateTotal = () => {
-    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
-  };
+  }, []);
 
   const formatPrice = (price: number) => {
     if (isNaN(price) || price == null) return "0";
     return price.toLocaleString("ja-JP");
+  };
+
+  // ✅ 税込み価格を計算（消費税10%）
+  const calcTaxIncluded = (price: number) => {
+    return Math.round(price * 1.1);
+  };
+
+  // ✅ 合計金額は税込みで計算
+  const calculateTotal = () => {
+    return cart.reduce(
+      (total, item) => total + calcTaxIncluded(item.price) * item.quantity,
+      0
+    );
   };
 
   const openConfirmModal = (item: MenuItem) => {
@@ -188,8 +190,10 @@ const fetchMenuData = async () => {
               <div className={styles.cardBody}>
                 <h3 className={styles.name}>{item.name}</h3>
                 <div className={styles.priceContainer}>
+                  {/* ✅ 税抜き＋税込み価格表示 */}
                   <span className={styles.price}>
-                    {formatPrice(item.price)}円
+                    {formatPrice(item.price)}円 （税込
+                    {formatPrice(calcTaxIncluded(item.price))}円）
                   </span>
                 </div>
                 {item.comment && (
@@ -238,26 +242,14 @@ const fetchMenuData = async () => {
                       <div className={styles.cartDetails}>
                         <p className={styles.cartName}>{item.name}</p>
                         <div className={styles.quantityControls}>
-                          <button
-                            onClick={() =>
-                              updateQuantity(item.id, item.quantity - 1)
-                            }
-                            className={styles.quantityButton}
-                          >
-                            -
-                          </button>
                           <span>{item.quantity}</span>
-                          <button
-                            onClick={() =>
-                              updateQuantity(item.id, item.quantity + 1)
-                            }
-                            className={styles.quantityButton}
-                          >
-                            +
-                          </button>
                         </div>
                         <p className={styles.cartPrice}>
-                          {formatPrice(item.price * item.quantity)}円
+                          {/* ✅ カートは税込み価格だけ */}
+                          {formatPrice(
+                            calcTaxIncluded(item.price) * item.quantity
+                          )}
+                          円 (税込)
                         </p>
                         <button
                           onClick={() => removeFromCart(item.id)}
@@ -294,7 +286,12 @@ const fetchMenuData = async () => {
                       <span>
                         {item.name} × {item.quantity}
                       </span>
-                      <span>{formatPrice(item.price * item.quantity)}円</span>
+                      <span>
+                        {formatPrice(
+                          calcTaxIncluded(item.price) * item.quantity
+                        )}
+                        円
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -335,7 +332,8 @@ const fetchMenuData = async () => {
           <div className={styles.modal}>
             <h3>{selectedItem.name}</h3>
             <p className={styles.modalPrice}>
-              {formatPrice(selectedItem.price)}円
+              {/* ✅ モーダルも税込み価格 */}
+              {formatPrice(calcTaxIncluded(selectedItem.price))}円
             </p>
             <div className={styles.quantitySelector}>
               <button
