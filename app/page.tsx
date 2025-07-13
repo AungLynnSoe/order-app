@@ -34,46 +34,80 @@ export default function MenuPage() {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchMenuData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch(MENU_API_URL, {
-          headers: {
-            "X-API-KEY": process.env.NEXT_PUBLIC_MICROCMS_API_KEY || "",
-          },
-        });
+  
+   useEffect(() => {
+  
+      // formatPrice関数はそのまま（既に正しく実装されている）
 
-        const data = await response.json();
-        setMenu(data.contents);
-      } catch (err) {
-        console.error("メニュー取得エラー:", err);
-      } finally {
-        setIsLoading(false);
+
+// APIデータ取得部分の修正
+const fetchMenuData = async () => {
+  try {
+    setIsLoading(true);
+    const response = await fetch(MENU_API_URL, {
+      headers: {
+        "X-API-KEY": process.env.NEXT_PUBLIC_MICROCMS_API_KEY || "",
+      },
+    });
+
+    const data = await response.json();
+    console.log("APIから取得したメニュー:", data);
+
+    // 価格処理の簡素化
+    const fixedMenu = data.contents.map((item: MenuItem) => {
+      // 価格が数値でない場合、数値に変換
+      const price = typeof item.price === 'string' 
+        ? parseInt(item.price, 10) 
+        : item.price;
+
+      // 数値変換に失敗した場合や不正な値の場合の処理
+      if (isNaN(price) || price == null) {
+        console.error(`無効な価格です: ${item.price}`, item);
+        return {
+          ...item,
+          price: 0, // または適切なデフォルト値
+        };
       }
-    };
 
-    fetchMenuData();
+      return {
+        ...item,
+         price: Math.max(0, price),
+        };
+      });
 
-    const saved = localStorage.getItem("cart");
-    if (saved) {
-      try {
-        setCart(JSON.parse(saved));
-      } catch (e) {
-        console.error("カートデータ読み込みエラー:", e);
-        localStorage.removeItem("cart");
-      }
+      setMenu(fixedMenu);
+    } catch (err) {
+      console.error("メニュー取得エラー:", err);
+    } finally {
+      setIsLoading(false);
     }
-  }, []);
+  };
 
-  // 合計金額計算関数
+  fetchMenuData();
+
+  // ローカルストレージからカートを復元
+  const saved = localStorage.getItem("cart");
+  if (saved) {
+    try {
+      const parsedCart: CartItem[] = JSON.parse(saved).map((item: CartItem) => ({
+        ...item,
+        price: parseInt(String(item.price), 10) || 999, // 数値化
+      }));
+      setCart(parsedCart);
+    } catch (e) {
+      console.error("カートデータ読み込みエラー:", e);
+      localStorage.removeItem("cart");
+    }
+  }
+}, []);
+
   const calculateTotal = () => {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
-  // 価格表示フォーマット関数
   const formatPrice = (price: number) => {
-    return price?.toLocaleString("ja-JP") || "0";
+    if (isNaN(price) || price == null) return "0";
+    return price.toLocaleString("ja-JP");
   };
 
   const openConfirmModal = (item: MenuItem) => {
@@ -157,17 +191,6 @@ export default function MenuPage() {
                   <span className={styles.price}>
                     {formatPrice(item.price)}円
                   </span>
-                  {item.price && (
-                    <span className={styles.taxInclusive}>
-                      (税込 {formatPrice(Math.round(item.price * 1.1))}円)
-                    </span>
-                  )}
-
-                  {/* {item.price && (
-                    <span className={styles.taxInclusive}>
-                      (税込 {formatPrice(Math.round(item.price * 1.1)}円)
-                    </span>
-                  )} */}
                 </div>
                 {item.comment && (
                   <p className={styles.comment}>
@@ -194,7 +217,6 @@ export default function MenuPage() {
       {/* 注文状況 */}
       <aside className={styles.cartPanel}>
         <h2 className={styles.cartTitle}>注文状況</h2>
-
         {!showCheckout ? (
           <>
             {cart.length === 0 ? (
@@ -203,10 +225,7 @@ export default function MenuPage() {
               <>
                 <ul className={styles.cartItems}>
                   {cart.map((item) => (
-                    <li
-                      key={`${item.id}-${item.quantity}`}
-                      className={styles.cartItem}
-                    >
+                    <li key={item.id} className={styles.cartItem}>
                       {item.image && (
                         <Image
                           src={item.image.url}
