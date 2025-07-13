@@ -1,6 +1,6 @@
 import "./globals.css";
 import { ReactNode } from "react";
-import { CartProvider } from "./context/CartContext"
+import { CartProvider } from "./context/CartContext";
 
 export const metadata = {
   title: "焼肉注文アプリ",

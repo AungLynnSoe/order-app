@@ -25,6 +25,24 @@
   position: sticky;
   top: 2rem;
 }
+.card span {
+  display: inline-block;
+  transition: transform 200ms;
+}
+
+.card h2 {
+  font-weight: 600;
+  margin-bottom: 0.7rem;
+}
+
+/* .card p {
+  margin: 0;
+  opacity: 0.6;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  max-width: 30ch;
+  text-wrap: balance;
+} */
 
 /* タイトル */
 .title {
@@ -36,17 +54,19 @@
 /* メニューグリッド */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(3, minmax(25%, auto));
   gap: 1.5rem;
+  max-width: 100%;
+  width: var(--max-width);
 }
 
 /* メニューカード */
 .card {
-  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* 高さを均等に */
+  height: 80%; /* 高さをグリッド内で合わせる */
   border-radius: 12px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
-  padding: 1rem;
-  transition: transform 0.2s ease;
 }
 
 .card:hover {
@@ -57,9 +77,21 @@
 .menuImage {
   border-radius: 8px;
   width: 100%;
-  height: auto;
+  height: 300px;
   object-fit: cover;
   margin-bottom: 0.75rem;
+}
+/* .cardImage{
+  border-radius: 8px;
+  width: 100%;
+ 
+  object-fit: cover;
+} */
+.cardBody {
+  flex-grow: 1;
+  height: 200px;
+  
+  
 }
 
 /* 商品情報 */
@@ -67,15 +99,21 @@
   margin: 0.5rem 0 0.25rem;
   font-size: 1.1rem;
   font-weight: 600;
+  text-align: center;
+  
 }
 
 .cardBody p {
   font-size: 0.95rem;
   color: #555;
+  text-align: center;
 }
+
 
 /* カート追加ボタン */
 .addButton {
+  display: flex;
+  /* width: 100%; */
   margin-top: 0.5rem;
   background-color: #0070f3;
   color: white;
@@ -85,11 +123,27 @@
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s;
+  margin-left: 50px;
+  
+  
 }
 
 .addButton:hover {
   background-color: #0059c1;
 }
+.removeButton {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 0.2rem 0.5rem;
+  margin-left: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.removeButton:hover {
+  background-color: #d32f2f;
+}
+
 
 /* ステッパー */
 /* ステッパー（数量調整ボタン）のスタイル修正 */
@@ -101,7 +155,6 @@
   margin: 50px;
   border-radius: 4px;
   overflow: hidden;
-
 }
 
 .stepper button {
@@ -119,7 +172,7 @@
 }
 
 .stepper button:hover {
-  background: #e0e0e0;
+  background: greenyellow;
 }
 
 /*  */
@@ -131,7 +184,6 @@
 }
 
 /* カート追加ボタンとの間隔調整 */
-
 
 /* カートタイトル */
 .cartPanel h2 {
@@ -159,20 +211,22 @@
 
 /* 決済ボタン共通 */
 .cartPanel button {
-  width: 100%;
-  padding: 0.75rem;
+  display: block;          /* ボタンをブロック要素に */
+  margin: 1rem auto;       /* 上下1rem、左右autoで中央寄せ */
+  padding: 0.5rem 1rem;
+  background-color: #75899d;
+  color: white;
   border: none;
-  border-radius: 10px;
-  font-weight: bold;
+  border-radius: 6px;
+  font-size: 1rem;
   cursor: pointer;
-  margin-top: 0.75rem;
-  transition: background 0.3s;
 }
 
 /* 注文確認 */
 .cartPanel button:nth-of-type(1) {
   background-color: #0070f3;
   color: white;
+    align-items: center;
 }
 
 .cartPanel button:nth-of-type(1):hover {
@@ -209,6 +263,13 @@
 .cartPanel .returnButton:hover {
   background-color: #444;
 }
+/* .removeButton{
+  background-color: #0059c1;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+} */
 
 /* ローディング */
 .loading {

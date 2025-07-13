@@ -72,6 +72,9 @@ export default function MenuPage() {
       }
     }
   }, []);
+  const removeFromCart = (id: string) => {
+    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
+  };
 
   // ✅ 税込み価格
   const calcTaxIncluded = (price: number) => Math.round(price * 1.1);
@@ -143,6 +146,7 @@ export default function MenuPage() {
                   width={200}
                   height={150}
                   className={styles.menuImage}
+                  style={{ objectFit: "cover", borderRadius: "8px" }}
                 />
               )}
               <div className={styles.cardBody}>
@@ -201,12 +205,21 @@ export default function MenuPage() {
                       {item.name} × {item.quantity}：
                       {formatPrice(calcTaxIncluded(item.price) * item.quantity)}
                       円
+                      <button
+                        className={styles.removeButton}
+                        onClick={() => removeFromCart(item.id)}
+                      >
+                        削除
+                      </button>
                     </li>
                   ))}
                 </ul>
+
                 {/* <p>合計: {formatPrice(calculateTotal())}円</p> */}
+                <>
 
                 <button onClick={() => setShowCheckout(true)}>注文確認</button>
+                </>
               </>
             )}
           </>
