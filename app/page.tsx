@@ -146,7 +146,6 @@ export default function MenuPage() {
                   width={200}
                   height={150}
                   className={styles.menuImage}
-                  style={{ objectFit: "cover", borderRadius: "8px" }}
                 />
               )}
               <div className={styles.cardBody}>
@@ -201,10 +200,16 @@ export default function MenuPage() {
               <>
                 <ul>
                   {cart.map((item) => (
-                    <li key={item.id}>
-                      {item.name} × {item.quantity}：
-                      {formatPrice(calcTaxIncluded(item.price) * item.quantity)}
-                      円
+                    <li key={item.id} className={styles.cartItemRow}>
+                      <div className={styles.cartItemInfo}>
+                        <strong>
+                          {item.name} × {item.quantity}：
+                        </strong>
+                        {formatPrice(
+                          calcTaxIncluded(item.price) * item.quantity
+                        )}
+                        円(税込)
+                      </div>
                       <button
                         className={styles.removeButton}
                         onClick={() => removeFromCart(item.id)}
@@ -217,8 +222,9 @@ export default function MenuPage() {
 
                 {/* <p>合計: {formatPrice(calculateTotal())}円</p> */}
                 <>
-
-                <button onClick={() => setShowCheckout(true)}>注文確認</button>
+                  <button onClick={() => setShowCheckout(true)}>
+                    注文確認
+                  </button>
                 </>
               </>
             )}
@@ -227,23 +233,29 @@ export default function MenuPage() {
           <div>
             {!orderComplete ? (
               <>
-                <h3>注文確認</h3>
+                
                 <ul>
                   {cart.map((item) => (
                     <li key={item.id}>
                       {item.name} × {item.quantity}：
                       {formatPrice(calcTaxIncluded(item.price) * item.quantity)}
-                      円
+                      円(税込)
                     </li>
                   ))}
                 </ul>
-                <p>合計: {formatPrice(calculateTotal())}円</p>
+                <p>合計: {formatPrice(calculateTotal())}円(税込)</p>
                 <button onClick={() => setShowCheckout(false)}>戻る</button>
                 <button onClick={completeOrder}>お会計へ進む</button>
               </>
             ) : (
               <div>
-                <h3>ご注文ありがとうございました！</h3>
+                <h3>ご注文</h3>
+                <Image
+                  src="/s300_s0050_11_0.png"
+                  alt="ご注文"
+                  width={200}
+                  height={150}
+                />
                 <p>またのお越しをお待ちしております</p>
                 <button onClick={resetOrder}>トップに戻る</button>
               </div>

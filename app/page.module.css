@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: row;
   gap: 2rem;
-  padding: 2rem;
+  padding: 1rem;
   font-family: "Segoe UI", "Helvetica Neue", sans-serif;
   background: #fdfdfd;
   min-height: 100vh;
@@ -25,24 +25,24 @@
   position: sticky;
   top: 2rem;
 }
+.cartPanel h2 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+}
+.cartPanel p {
+  font-weight: bold;
+  margin-top: 1rem;
+  text-align: center;
+}
+
 .card span {
   display: inline-block;
   transition: transform 200ms;
 }
 
-.card h2 {
-  font-weight: 600;
-  margin-bottom: 0.7rem;
-}
 
-/* .card p {
-  margin: 0;
-  opacity: 0.6;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  max-width: 30ch;
-  text-wrap: balance;
-} */
+
+
 
 /* タイトル */
 .title {
@@ -69,28 +69,21 @@
   border-radius: 12px;
 }
 
-.card:hover {
+/* .card:hover {
   transform: translateY(-4px);
-}
+} */
 
 /* カード内画像 */
 .menuImage {
-  border-radius: 8px;
+  /* border-radius: 6px; */
   width: 100%;
-  height: 300px;
+  height: 150px;
   object-fit: cover;
   margin-bottom: 0.75rem;
 }
-/* .cardImage{
-  border-radius: 8px;
-  width: 100%;
- 
-  object-fit: cover;
-} */
+
 .cardBody {
   flex-grow: 1;
-  height: 200px;
-  
   
 }
 
@@ -101,14 +94,15 @@
   font-weight: 600;
   text-align: center;
   
+  
 }
 
 .cardBody p {
   font-size: 0.95rem;
   color: #555;
   text-align: center;
+  color: black;
 }
-
 
 /* カート追加ボタン */
 .addButton {
@@ -124,29 +118,29 @@
   cursor: pointer;
   transition: background-color 0.3s;
   margin-left: 50px;
-  
-  
 }
 
 .addButton:hover {
   background-color: #0059c1;
 }
-.removeButton {
-  background-color: #f44336;
-  color: white;
-  border: none;
-  padding: 0.2rem 0.5rem;
-  margin-left: 0.5rem;
-  border-radius: 4px;
-  cursor: pointer;
+.cartItemRow {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+  gap: 1rem;
+  border-bottom: 1px solid #ddd;
+  color: brown;
+  width: 100%;
 }
-.removeButton:hover {
-  background-color: #d32f2f;
+.cartItemInfo {
+  flex: 1;
+  width: 50px;
+
 }
+
 
 
 /* ステッパー */
-/* ステッパー（数量調整ボタン）のスタイル修正 */
 .stepper {
   display: flex;
   align-items: center;
@@ -175,15 +169,11 @@
   background: greenyellow;
 }
 
-/*  */
-
 .stepper span {
   flex-grow: 1;
   text-align: center;
   font-weight: bold;
 }
-
-/* カート追加ボタンとの間隔調整 */
 
 /* カートタイトル */
 .cartPanel h2 {
@@ -200,7 +190,7 @@
 
 .cartPanel li {
   margin-bottom: 0.6rem;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
 }
 
 /* 合計金額 */
@@ -211,8 +201,8 @@
 
 /* 決済ボタン共通 */
 .cartPanel button {
-  display: block;          /* ボタンをブロック要素に */
-  margin: 1rem auto;       /* 上下1rem、左右autoで中央寄せ */
+  display: block; /* ボタンをブロック要素に */
+  margin: 1rem auto; /* 上下1rem、左右autoで中央寄せ */
   padding: 0.5rem 1rem;
   background-color: #75899d;
   color: white;
@@ -226,7 +216,7 @@
 .cartPanel button:nth-of-type(1) {
   background-color: #0070f3;
   color: white;
-    align-items: center;
+  align-items: center;
 }
 
 .cartPanel button:nth-of-type(1):hover {
@@ -247,6 +237,7 @@
 .cartPanel h3 {
   font-size: 1.3rem;
   margin-bottom: 0.5rem;
+  text-align: center;
 }
 
 .cartPanel p {
@@ -263,13 +254,6 @@
 .cartPanel .returnButton:hover {
   background-color: #444;
 }
-/* .removeButton{
-  background-color: #0059c1;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-} */
 
 /* ローディング */
 .loading {
