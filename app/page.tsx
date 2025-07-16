@@ -29,6 +29,8 @@ export default function MenuPage() {
   const [orderComplete, setOrderComplete] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [splitPeople, setSplitPeople] = useState<number>(1); // ✅ 割り勘人数 state
+
   // ✅ メニュー取得 & カート復元
   useEffect(() => {
     const fetchMenuData = async () => {
@@ -72,6 +74,23 @@ export default function MenuPage() {
       }
     }
   }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add(styles.visible);
+          observer.unobserve(entry.target); // 一度表示されたら監視終了
+        }
+      });
+    });
+
+    const cards = document.querySelectorAll(`.${styles.fadeIn}`);
+    cards.forEach((card) => observer.observe(card));
+
+    return () => observer.disconnect();
+  }, []);
+
   const removeFromCart = (id: string) => {
     setCart((prevCart) => prevCart.filter((item) => item.id !== id));
   };
@@ -125,6 +144,7 @@ export default function MenuPage() {
     localStorage.removeItem("cart");
     setShowCheckout(false);
     setOrderComplete(false);
+    setSplitPeople(1); // 割り勘人数もリセット
   };
 
   // ✅ 金額整形
@@ -138,7 +158,7 @@ export default function MenuPage() {
         <h1 className={styles.title}>メニュー一覧</h1>
         <ul className={styles.grid}>
           {menu.map((item) => (
-            <li key={item.id} className={styles.card}>
+            <li key={item.id} className={`${styles.card} ${styles.fadeIn}`}>
               {item.image && (
                 <Image
                   src={item.image.url}
@@ -219,13 +239,7 @@ export default function MenuPage() {
                     </li>
                   ))}
                 </ul>
-
-                {/* <p>合計: {formatPrice(calculateTotal())}円</p> */}
-                <>
-                  <button onClick={() => setShowCheckout(true)}>
-                    注文確認
-                  </button>
-                </>
+                <button onClick={() => setShowCheckout(true)}>注文確認</button>
               </>
             )}
           </>
@@ -233,7 +247,6 @@ export default function MenuPage() {
           <div>
             {!orderComplete ? (
               <>
-                
                 <ul>
                   {cart.map((item) => (
                     <li key={item.id}>
@@ -244,6 +257,29 @@ export default function MenuPage() {
                   ))}
                 </ul>
                 <p>合計: {formatPrice(calculateTotal())}円(税込)</p>
+
+                {/* ✅ 割り勘計算UI */}
+                <div className={styles.splitBill}>
+                  <label htmlFor="peopleInput">人数で割り勘:</label>
+                  <select
+                    id="peopleInput"
+                    value={splitPeople}
+                    onChange={(e) => setSplitPeople(Number(e.target.value))}
+                    className={styles.peopleSelect}
+                  >
+                    {/* 1〜20人まで選べる */}
+                    {[...Array(10)].map((_, i) => (
+                      <option key={i + 1} value={i + 1}>
+                        {i + 1}
+                      </option>
+                    ))}
+                  </select>
+                  <p>
+                    1人あたり:{" "}
+                    {formatPrice(Math.ceil(calculateTotal() / splitPeople))}円
+                  </p>
+                </div>
+
                 <button onClick={() => setShowCheckout(false)}>戻る</button>
                 <button onClick={completeOrder}>お会計へ進む</button>
               </>
