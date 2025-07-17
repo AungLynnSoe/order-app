@@ -155,7 +155,8 @@ export default function MenuPage() {
   return (
     <div className={styles.container}>
       <main className={styles.menuList}>
-        <h1 className={styles.title}>メニュー一覧</h1>
+        <h1 className={styles.title}>カルビ屋</h1>
+        <h2 className={styles.subtitle}>メニュー一覧</h2>
         <ul className={styles.grid}>
           {menu.map((item) => (
             <li key={item.id} className={`${styles.card} ${styles.fadeIn}`}>

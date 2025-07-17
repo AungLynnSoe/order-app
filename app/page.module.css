@@ -5,19 +5,20 @@
   gap: 2rem;
   padding: 1rem;
   font-family: "Segoe UI", "Helvetica Neue", sans-serif;
-  background: #fdfdfd;
+  background:black;
   min-height: 100vh;
 }
 
 /* メニューリスト全体 */
 .menuList {
   flex: 3;
+  background-color: black;
 }
 
 /* カート（右サイド） */
 .cartPanel {
   flex: 1;
-  background-color: #fff;
+  background-color: black;
   padding: 1.5rem;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -28,11 +29,14 @@
 .cartPanel h2 {
   font-size: 1.4rem;
   margin-bottom: 1rem;
+  color: white;
+  
 }
 .cartPanel p {
   font-weight: bold;
   margin-top: 1rem;
   text-align: center;
+  color: white;
 }
 
 .card span {
@@ -45,6 +49,13 @@
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
+  color:white;
+}
+.subtitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #ccc;
 }
 
 /* メニューグリッド */
@@ -89,13 +100,14 @@
   font-size: 1.1rem;
   font-weight: 600;
   text-align: center;
+  color: white;
 }
 
 .cardBody p {
   font-size: 0.95rem;
-  color: #555;
+ 
   text-align: center;
-  color: black;
+  color:white;
 }
 
 /* カート追加ボタン */
@@ -129,6 +141,7 @@
 .cartItemInfo {
   flex: 1;
   width: 50px;
+  color: white;
 }
 
 /* ステッパー */
@@ -164,6 +177,7 @@
   flex-grow: 1;
   text-align: center;
   font-weight: bold;
+  color: turquoise;
 }
 
 /* カートタイトル */
@@ -182,12 +196,14 @@
 .cartPanel li {
   margin-bottom: 0.6rem;
   font-size: 0.85rem;
+  color: white;
 }
 
 /* 合計金額 */
 .cartPanel p {
   font-weight: bold;
   margin-top: 1rem;
+  color: white;
 }
 
 /* 決済ボタン共通 */
@@ -229,12 +245,13 @@
   font-size: 1.3rem;
   margin-bottom: 0.5rem;
   text-align: center;
+  color: wheat;
 }
 
-.cartPanel p {
+/* .cartPanel p {
   color: #444;
   font-size: 0.95rem;
-}
+} */
 
 /* トップに戻るボタン */
 .cartPanel .returnButton {
@@ -266,6 +283,7 @@
 .splitBill {
   margin-top: 1rem;
   font-size: 0.95rem;
+  color: white;
 }
 
 .peopleInput {
