@@ -5,7 +5,7 @@
   gap: 2rem;
   padding: 1rem;
   font-family: "Segoe UI", "Helvetica Neue", sans-serif;
-  background:black;
+  background: black;
   min-height: 100vh;
 }
 
@@ -13,6 +13,17 @@
 .menuList {
   flex: 3;
   background-color: black;
+}
+.heroImage {
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  object-fit: cover;
+  /* margin-bottom: 1.5rem; */
+  display: block;
+  width: 90%;
+  height: 120px;
+  margin: 0px 50px;
+  transition: transform 0.3s ease;
 }
 
 /* カート（右サイド） */
@@ -30,7 +41,6 @@
   font-size: 1.4rem;
   margin-bottom: 1rem;
   color: white;
-  
 }
 .cartPanel p {
   font-weight: bold;
@@ -49,7 +59,7 @@
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
-  color:white;
+  color: white;
 }
 .subtitle {
   font-size: 1.5rem;
@@ -105,9 +115,9 @@
 
 .cardBody p {
   font-size: 0.95rem;
- 
+
   text-align: center;
-  color:white;
+  color: white;
 }
 
 /* カート追加ボタン */
@@ -130,17 +140,18 @@
   background-color: #0059c1;
 }
 .cartItemRow {
-  display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0.5rem 0;
   gap: 1rem;
   border-bottom: 1px solid #ddd;
-  color: brown;
+  color: white;
   width: 100%;
+  flex-direction: row;
 }
 .cartItemInfo {
   flex: 1;
-  width: 50px;
+  font-size: 1rem;
   color: white;
 }
 
@@ -254,13 +265,19 @@
 } */
 
 /* トップに戻るボタン */
-.cartPanel .returnButton {
-  background-color: #666;
+.removeButton {
+  background-color: #0070f3;
   color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.cartPanel .returnButton:hover {
-  background-color: #444;
+.removeButton:hover {
+  background-color: #0059c1;
 }
 
 /* ローディング */
@@ -291,4 +308,142 @@
   margin-left: 0.5rem;
   padding: 0.2rem;
   font-size: 1rem;
+}
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  position: relative;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.modalImage {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.closeButton {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+@media (max-width: 960px) {
+  .container {
+    flex-direction: column;
+    padding: 1rem;
+    align-items: center;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .heroImage {
+    width: 95%;
+    margin: 1rem auto;
+    height: auto;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  .addButton {
+    width: 60%;
+  }
+
+  .cartPanel {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cartPanel button {
+    width: 100%;
+    font-size: 1rem;
+    
+  }
+}
+
+/* ----------- スマホ（414px以下）対応 ----------- */
+@media (max-width: 414px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+    padding: 0 0.5rem;
+  }
+  .cartItemRow {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+ 
+  .heroImage {
+    width: 100%;
+    height: auto;
+    margin: 1rem 0;
+    object-fit: cover;
+  }
+
+  .card {
+    width: 100%;
+    padding: 1rem;
+    box-sizing: border-box;
+    border-radius: 12px;
+    background: #111;
+  }
+
+  .cartPanel {
+    padding: 1.2rem;
+    /* border-radius: 16px; */
+    width: 50%;
+    
+  }
+
+  .cartPanel h2 {
+    font-size: 1.4rem;
+  }
+
+  .cartPanel li {
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.95rem;
+  }
+
+  .cartPanel button {
+    font-size: 1rem;
+    padding: 0.6rem;
+    border-radius: 10px;
+  }
+
+  .returnButton {
+    margin-top: 0.5rem;
+  }
 }

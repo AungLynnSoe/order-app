@@ -155,7 +155,14 @@ export default function MenuPage() {
   return (
     <div className={styles.container}>
       <main className={styles.menuList}>
-        <h1 className={styles.title}>カルビ屋</h1>
+        <Image
+          src="/karubi.png"
+          alt="カルビ屋"
+          width={800}
+          height={200}
+          className={styles.heroImage}
+        />
+        {/* <h1 className={styles.title}>カルビ屋</h1> */}
         <h2 className={styles.subtitle}>メニュー一覧</h2>
         <ul className={styles.grid}>
           {menu.map((item) => (
