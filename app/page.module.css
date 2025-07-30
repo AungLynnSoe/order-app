@@ -243,12 +243,12 @@
 
 /* 確認画面の戻るボタン */
 .cartPanel button:nth-of-type(2) {
-  background-color: #ccc;
+  background-color: yellow;
   color: #222;
 }
 
 .cartPanel button:nth-of-type(2):hover {
-  background-color: #bbb;
+  background-color:yellow;
 }
 
 /* 完了画面 */
