@@ -238,12 +238,12 @@ export default function MenuPage() {
                         )}
                         円(税込)
                       </div>
-                      <button
+                      {/* <button
                         className={styles.removeButton}
                         onClick={() => removeFromCart(item.id)}
                       >
                         削除
-                      </button>
+                      </button> */}
                     </li>
                   ))}
                 </ul>
